@@ -1,5 +1,5 @@
 @extends('layout.master')
 
 @section('content')
-    HELLO
+    This is profile page
 @endsection

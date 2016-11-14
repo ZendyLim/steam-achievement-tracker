@@ -1,0 +1,12 @@
+*{
+    border: 1px red !important;
+}
+
+#content-wrapper{
+    padding-top: 70px;
+}
+
+#loginSteamButton{
+    padding: 7px;
+    margin: 0px;
+}
