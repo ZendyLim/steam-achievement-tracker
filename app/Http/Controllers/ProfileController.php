@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-    private function sortByName($a, $b){
-        if($a->name > $b->name)
+    private function sortByName($a, $b)
+    {
+        if ($a->name > $b->name)
             return 1;
-        else if($a->name < $b->name)
+        else if ($a->name < $b->name)
             return -1;
         else
             return 0;
@@ -24,7 +25,7 @@ class ProfileController extends Controller
 
     public function index(Request $request, $id)
     {
-        if(!$this->checkLogin($request))
+        if (!$this->checkLogin($request))
             return redirect('/');
 
         $values = new \stdClass();
@@ -37,7 +38,7 @@ class ProfileController extends Controller
         $json = file_get_contents($url);
         $players = json_decode($json)->response->players;
 
-        if(sizeof($players) < 1)
+        if (sizeof($players) < 1)
             return redirect()->route('profile', ['id' => $request->session()->get('STEAM_ID')]);
 
         $player = $players[0];
@@ -61,16 +62,14 @@ class ProfileController extends Controller
 
         /* IF SEARCH IS INVOKED */
 
-        if(isset($request->name))
+        if (isset($request->name))
         {
             $games = array();
 
-            foreach($responses->response->games as $game)
+            foreach ($responses->response->games as $game)
             {
-                if(stripos($game->name, $_GET['name']) !== false)
-                {
+                if (stripos($game->name, $_GET['name']) !== false)
                     array_push($games, $game);
-                }
             }
 
             $values->games = $games;
@@ -84,7 +83,7 @@ class ProfileController extends Controller
 
         /* PAGINATION */
 
-        if(!isset($_GET['page']))
+        if (!isset($_GET['page']))
             $page = 1;
         else
             $page = $_GET['page'];
@@ -96,19 +95,54 @@ class ProfileController extends Controller
 
         foreach ($values->games as $game)
         {
-            if($index >= $start_index && $index <= $finish_index )
+            if ($index >= $start_index && $index <= $finish_index)
                 array_push($games, $game);
-            if($index >= $finish_index)
+            if ($index >= $finish_index)
                 break;
             $index++;
         }
 
         $values->games = $games;
+        $values->page = $page;
+
+        $link = '';
+
+        if(isset($_GET['name']))
+        {
+            $link = $link.'&name='.$_GET['name'];
+        }
+
+        $values->link = $link;
+
         /* END */
 
-
-
         return view('profile')->with('values', $values);
+    }
+
+    public function details(Request $request, $id, $appid)
+    {
+        if (!$this->checkLogin($request))
+            return redirect('/');
+
+        $values = new \stdClass();
+        $STEAM_ID = $id;
+        $API_KEY = env('STEAM_API_KEY', '');
+
+        /* GET GAME DETAILS */
+
+        $url = "http://store.steampowered.com/api/appdetails?appids=$appid";
+        $json = file_get_contents($url);
+        $players = json_decode($json);
+
+        dd($players);
+
+        if (sizeof($players) < 1)
+            return redirect()->route('profile', ['id' => $request->session()->get('STEAM_ID')]);
+
+        $player = $players[0];
+        $values->profile = $player;
+
+        /* GET BAN DATA */
     }
 
     public function redirectProfile(Request $request)

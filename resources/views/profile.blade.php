@@ -6,41 +6,46 @@
             <img src="{{ $values->profile->avatarfull }}" class="img-thumbnail" style="width: 100%"/>
         </div>
         <div class="col-md-9">
-            <table class="table table-bordered">
-                <tr>
-                    <td colspan="2">
-                        <h3>{{ $values->profile->personaname }}</h3>
-                        <a href="{{ $values->profile->profileurl }}"> {{ $values->profile->steamid }} </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-left" style="width: 12em;">Community Ban</td>
-                    @if($values->bans->CommunityBanned)
-                        <td class="text-danger">Banned</td>
-                    @else
-                        <td class="text-primary">None</td>
-                        @endif
-                        </td>
-                </tr>
-                <tr>
-                    <td class="text-left">VAC Ban</td>
-                    @if($values->bans->VACBanned)
-                        <td class="text-danger">Banned ({{ $values->bans->NumberOfVACBans }})</td>
-                    @else
-                        <td class="text-primary">None</td>
-                        @endif
-                        </td>
-                </tr>
-                <tr>
-                    <td class="text-left">Days Since Last Ban</td>
-                    @if($values->bans->DaysSinceLastBan > 0)
-                        <td class="text-danger">{{ $values->bans->DaysSinceLastBan }} days</td>
-                    @else
-                        <td class="text-primary">{{ $values->bans->DaysSinceLastBan }} days</td>
-                        @endif
-                        </td>
-                </tr>
-            </table>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>{{ $values->profile->personaname }}</h3>
+                    <a href="{{ $values->profile->profileurl }}"> {{ $values->profile->steamid }} </a>
+                </div>
+            </div>
+            <br/>
+            <br/>
+            <div class="row">
+                <div class="col-md-2">
+                    <b>Community Ban</b>
+                </div>
+                @if($values->bans->CommunityBanned)
+                    <div class="col-md-2 text-danger">Banned</div>
+                @else
+                    <div class="col-md-2 text-primary">None</div>
+                @endif
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-2">
+                    <b>VAC Ban</b>
+                </div>
+                @if($values->bans->VACBanned)
+                    <div class="col-md-2 text-danger">Banned ({{ $values->bans->NumberOfVACBans }})</div>
+                @else
+                    <div class="col-md-2 text-primary">None</div>
+                @endif
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-2">
+                    <b>VAC Ban</b>
+                </div>
+                @if($values->bans->VACBanned)
+                    <div class="col-md-2 text-danger">{{ $values->bans->DaysSinceLastBan }} days</div>
+                @else
+                    <div class="col-md-2 text-primary">{{ $values->bans->DaysSinceLastBan }} days</div>
+                @endif
+            </div>
         </div>
     </div>
     <div class="row">
@@ -57,64 +62,83 @@
         </form>
     </div>
     <hr/>
-    <div class="row">
-        <table class="table table-striped">
-            <tr>
-                <th colspan="2">Games</th>
-                <th>Time Played</th>
-            </tr>
-            @foreach ($values->games as $game)
+    @if($values->game_count < 1)
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h2>No result</h2>
+            </div>
+        </div>
+    @else
+        <div class="row">
+            <table class="table table-striped">
                 <tr>
-                    <td style="width: 10%;">
-                        <a href="../profile/{{ $values->profile->steamid }}/{{ $game->appid }}" />
+                    <th colspan="2">Games</th>
+                    <th>Time Played</th>
+                </tr>
+                @foreach ($values->games as $game)
+                    <tr>
+                        <td style="width: 10%;">
+                            <a href="../profile/{{ $values->profile->steamid }}/{{ $game->appid }}"/>
                             <img width="100%" class="img-thumbnail"
                                  src="http://media.steampowered.com/steamcommunity/public/images/apps/{{ $game->appid }}/{{ $game->img_logo_url }}.jpg"/>
-                        </a>
-                    </td>
-                    <td>
-                        {{ $game->name }}
-                        <br/>
-                        <i class="text-muted">AppID: {{ $game->appid }}</i>
-                    </td>
-                    <td>{{ round($game->playtime_forever/60.0, 1) }} Hours</td>
-                </tr>
-            @endforeach
-        </table>
-    </div>
-    <div class="row">
-        <div class="col-md-3">
-            <ul class="pagination">
-                <li>
-                    @if(isset($_GET['page']))
-                        @if($_GET['page'] < 2)
-                            <a href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </td>
+                        <td>
+                            {{ $game->name }}
+                            <br/>
+                            <i class="text-muted">AppID: {{ $game->appid }}</i>
+                        </td>
+                        <td>{{ round($game->playtime_forever/60.0, 1) }} Hours</td>
+                    </tr>
+                @endforeach
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <ul class="pagination">
+                    <li>
+                        @if($values->page < 2)
+                            <a href="?page={{ 1 }}{{ $values->link }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo; Prev</span>
                             </a>
                         @else
-                            <a href="#" aria-label="Previouss">
-                                <span aria-hidden="true">&laquo;</span>
+                            <a href="?page={{ $values->page - 1 }}{{ $values->link }}" aria-label="Previouss">
+                                <span aria-hidden="true">&laquo; Prev</span>
                             </a>
                         @endif
-                    @else
-                        <a href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    @endif
-                </li>
-            </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6 text-center">
+                <ul class="pagination">
+                    <li>
+                        Page
+                        @if(isset($_GET['page']))
+                            {{ $_GET['page'] }}
+                        @else
+                            1
+                        @endif
+                        of {{ ceil($values->game_count / 10.0) }}
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-3" align="right">
+                <ul class="pagination">
+                    <li>
+                        @if($values->page >= ceil($values->game_count / 10.0))
+                            <a href="?page={{ ceil($values->game_count / 10.0) }}{{ $values->link }}"
+                               aria-label="Previous">
+                                <span aria-hidden="true">Next &raquo;</span>
+                            </a>
+                        @else
+                            <a href="?page={{ $values->page + 1 }}{{ $values->link }}" aria-label="Previouss">
+                                <span aria-hidden="true">Next &raquo;</span>
+                            </a>
+                        @endif
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div class="col-md-6 text-center">
-            Page
-            @if(isset($_GET['page']))
-                {{ $_GET['page'] }}
-            @else
-                1
-            @endif
-            of {{ ceil($values->game_count / 10.0) }}
-        </div>
-        <div class="col-md-3">
-            PREV
-        </div>
-    </div>
+    @endif
 
 @endsection
