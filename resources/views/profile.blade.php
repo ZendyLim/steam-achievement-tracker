@@ -5,7 +5,7 @@
         <div class="col-md-3">
             <img src="{{ $values->profile->avatarfull }}" class="img-thumbnail" style="width: 100%"/>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-5">
             <div class="row">
                 <div class="col-md-12">
                     <h3>{{ $values->profile->personaname }}</h3>
@@ -15,7 +15,7 @@
             <br/>
             <br/>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <b>Community Ban</b>
                 </div>
                 @if($values->bans->CommunityBanned)
@@ -26,7 +26,7 @@
             </div>
             <br/>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <b>VAC Ban</b>
                 </div>
                 @if($values->bans->VACBanned)
@@ -37,7 +37,7 @@
             </div>
             <br/>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <b>VAC Ban</b>
                 </div>
                 @if($values->bans->VACBanned)
@@ -46,6 +46,18 @@
                     <div class="col-md-2 text-primary">{{ $values->bans->DaysSinceLastBan }} days</div>
                 @endif
             </div>
+        </div>
+        <div class="col-md-4">
+            <table class="table" style="background-color: #151515;">
+                <tr>
+                    <th>Games Owned</th>
+                    <th>Total Playtime</th>
+                </tr>
+                <tr>
+                    <td style="font-size: 30px">{{ $values->game_count }}</td>
+                    <td style="font-size: 30px">{{ round($values->total_playtime / 60.0, 0) }}h</td>
+                </tr>
+            </table>
         </div>
     </div>
     <div class="row">

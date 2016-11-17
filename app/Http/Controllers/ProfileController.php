@@ -62,6 +62,13 @@ class ProfileController extends Controller
 
         /* IF SEARCH IS INVOKED */
 
+        $total_playtime = 0;
+
+        foreach ($responses->response->games as $game)
+            $total_playtime += $game->playtime_forever;
+
+        $values->total_playtime = $total_playtime;
+
         if (isset($request->name))
         {
             $games = array();
