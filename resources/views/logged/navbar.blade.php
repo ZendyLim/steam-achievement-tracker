@@ -15,13 +15,13 @@
                 <li><a href="#">Friends</a></li>
                 <li class="dropdown">
                     <a href="#" id="loginSteamButton" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="{{ session()->get('AVATAR_S') }}" />
-                        {{ session()->get('STEAM_NAME') }}
+                        <img src="{{ $values->profile->avatar }}" />
+                        {{ $values->profile->personaname }}
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu" style="margin-top: 4px">
-                        <li><a href="profile">Profile</a></li>
-                        <li><a href="logout">Log Out</a></li>
+                        <li><a href="../profile/{{ session()->get('STEAM_ID') }}">Profile</a></li>
+                        <li><a href="../logout">Log Out</a></li>
                     </ul>
                 </li>
             </ul>

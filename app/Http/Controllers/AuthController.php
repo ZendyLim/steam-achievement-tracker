@@ -27,14 +27,14 @@ class AuthController extends Controller
     public function index(Request $request)
     {
         if($this->checkLogin($request))
-            return view('profile');
+            return redirect()->route('profile', ['id' => $request->session()->get('STEAM_ID')]);
         return view('welcome');
     }
 
     public function login(Request $request)
     {
         if($this->checkLogin($request))
-            return view('profile');
+            return redirect()->route('profile', ['id' => $request->session()->get('STEAM_ID')]);
 
         if ($this->steam->validate())
         {
@@ -42,16 +42,8 @@ class AuthController extends Controller
             if (!is_null($info))
             {
                 $STEAM_ID = $this->steam->getSteamID();
-                $API_KEY = env('STEAM_API_KEY', '');
-                $url = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=$API_KEY&steamids=$STEAM_ID";
-                $json = file_get_contents($url);
-                $player = json_decode($json)->response->players[0];
 
-                $request->session()->put('STEAM_ID', $player->steamid);
-                $request->session()->put('STEAM_NAME', $player->personaname);
-                $request->session()->put('AVATAR_S', $player->avatar);
-                $request->session()->put('AVATAR_M', $player->avatarmedium);
-                $request->session()->put('AVATAR_L', $player->avatarfull);
+                $request->session()->put('STEAM_ID', $STEAM_ID);
 
                 return redirect('/');
             }
