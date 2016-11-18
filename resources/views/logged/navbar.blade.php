@@ -11,8 +11,6 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Game List</a></li>
-                <li><a href="#">Friends</a></li>
                 <li class="dropdown">
                     <a href="#" id="loginSteamButton" class="dropdown-toggle" data-toggle="dropdown">
                         <img src="{{ session()->get('STEAM_AVATAR') }}" />
