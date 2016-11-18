@@ -126,6 +126,11 @@ class ProfileController extends Controller
         return view('profile')->with('values', $values);
     }
 
+    private function get_http_response_code($url) {
+        $headers = get_headers($url);
+        return substr($headers[0], 9, 3);
+    }
+
     public function details(Request $request, $id, $appid)
     {
         if (!$this->checkLogin($request))
@@ -138,17 +143,30 @@ class ProfileController extends Controller
 
         /* GET GAME DETAILS */
 
+
         $url = "http://store.steampowered.com/api/appdetails?appids=$APP_ID&cc=ID";
         $json = file_get_contents($url);
-        $data = json_decode($json)->$APP_ID->data;
+
+        $data = json_decode($json);
+
+        if($data->$APP_ID->success)
+            $data = $data->$APP_ID->data;
+        else
+            return redirect('/');
 
         $values->data = $data;
 
         /* GET ACHIEVEMENT DATA */
 
         $url = "http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=$APP_ID&key=$API_KEY&steamid=$STEAM_ID";
+
+        if($this->get_http_response_code($url) != "200")
+            return view('details')->with('error', true);
+
         $json = file_get_contents($url);
         $achievements = json_decode($json);
+
+
 
         if(isset($achievements->playerstats->achievements))
         {
