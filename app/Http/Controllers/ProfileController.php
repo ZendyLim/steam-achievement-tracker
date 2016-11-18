@@ -114,9 +114,9 @@ class ProfileController extends Controller
 
         $link = '';
 
-        if(isset($_GET['name']))
+        if (isset($_GET['name']))
         {
-            $link = $link.'&name='.$_GET['name'];
+            $link = $link . '&name=' . $_GET['name'];
         }
 
         $values->link = $link;
@@ -133,23 +133,47 @@ class ProfileController extends Controller
 
         $values = new \stdClass();
         $STEAM_ID = $id;
+        $APP_ID = $appid;
         $API_KEY = env('STEAM_API_KEY', '');
 
         /* GET GAME DETAILS */
 
-        $url = "http://store.steampowered.com/api/appdetails?appids=$appid";
+        $url = "http://store.steampowered.com/api/appdetails?appids=$APP_ID&cc=ID";
         $json = file_get_contents($url);
-        $players = json_decode($json);
+        $data = json_decode($json)->$APP_ID->data;
 
-        dd($players);
+        $values->data = $data;
 
-        if (sizeof($players) < 1)
-            return redirect()->route('profile', ['id' => $request->session()->get('STEAM_ID')]);
+        /* GET ACHIEVEMENT DATA */
 
-        $player = $players[0];
-        $values->profile = $player;
+        $url = "http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=$APP_ID&key=$API_KEY&steamid=$STEAM_ID";
+        $json = file_get_contents($url);
+        $achievements = json_decode($json);
 
-        /* GET BAN DATA */
+        if(isset($achievements->playerstats->achievements))
+        {
+            $url = "http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002/?key=$API_KEY&appid=$APP_ID&l=english";
+            $json = file_get_contents($url);
+            $achievement_detail = json_decode($json)->game->availableGameStats->achievements;
+
+            $index = 0;
+            $result = array();
+
+            foreach ($achievement_detail as $achievement)
+            {
+                $achievement->value = $achievements->playerstats->achievements[$index++]->achieved;
+                array_push($result, $achievement);
+            }
+
+            $values->achievement_avail = true;
+            $values->achievements = $achievement_detail;
+        }
+        else
+            $values->achievement_avail = false;
+
+        //dd($values);
+
+        return view('details')->with('values', $values);
     }
 
     public function redirectProfile(Request $request)

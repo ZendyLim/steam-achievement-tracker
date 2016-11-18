@@ -19,4 +19,6 @@ Route::get('logout', 'AuthController@logout');
 
 Route::get('profile/{id}', array('as' => 'profile', 'uses' => 'ProfileController@index'));
 
+Route::get('profile/{id}/{appid}', array('as' => 'details', 'uses' => 'ProfileController@details'));
+
 Route::get('profile', 'ProfileController@redirectProfile');
