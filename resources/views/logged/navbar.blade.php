@@ -15,8 +15,8 @@
                 <li><a href="#">Friends</a></li>
                 <li class="dropdown">
                     <a href="#" id="loginSteamButton" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="{{ $values->profile->avatar }}" />
-                        {{ $values->profile->personaname }}
+                        <img src="{{ session()->get('STEAM_AVATAR') }}" />
+                        {{ session()->get('STEAM_NAME') }}
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu" style="margin-top: 4px">
