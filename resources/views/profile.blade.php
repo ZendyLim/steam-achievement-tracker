@@ -90,13 +90,15 @@
                 @foreach ($values->games as $game)
                     <tr>
                         <td style="width: 10%;">
-                            <a href="../profile/{{ $values->profile->steamid }}/{{ $game->appid }}"/>
+                            <a target="_blank" href="../profile/{{ $values->profile->steamid }}/{{ $game->appid }}"/>
                             <img width="100%" class="img-thumbnail"
                                  src="http://media.steampowered.com/steamcommunity/public/images/apps/{{ $game->appid }}/{{ $game->img_logo_url }}.jpg"/>
                             </a>
                         </td>
                         <td>
+                            <a target="_blank" href="../profile/{{ $values->profile->steamid }}/{{ $game->appid }}"/>
                             {{ $game->name }}
+                            </a>
                             <br/>
                             <i class="text-muted">AppID: {{ $game->appid }}</i>
                         </td>

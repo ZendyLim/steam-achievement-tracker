@@ -126,7 +126,8 @@ class ProfileController extends Controller
         return view('profile')->with('values', $values);
     }
 
-    private function get_http_response_code($url) {
+    private function get_http_response_code($url)
+    {
         $headers = get_headers($url);
         return substr($headers[0], 9, 3);
     }
@@ -149,7 +150,7 @@ class ProfileController extends Controller
 
         $data = json_decode($json);
 
-        if($data->$APP_ID->success)
+        if ($data->$APP_ID->success)
             $data = $data->$APP_ID->data;
         else
             return redirect('/');
@@ -160,41 +161,42 @@ class ProfileController extends Controller
 
         $url = "http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=$APP_ID&key=$API_KEY&steamid=$STEAM_ID";
 
-        if($this->get_http_response_code($url) != "200")
-            return view('details')->with('error', true);
-
-        $json = file_get_contents($url);
-        $achievements = json_decode($json);
-
-
-
-        if(isset($achievements->playerstats->achievements))
-        {
-            $url = "http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002/?key=$API_KEY&appid=$APP_ID&l=english";
-            $json = file_get_contents($url);
-            $achievement_detail = json_decode($json)->game->availableGameStats->achievements;
-
-            $index = 0;
-            $result = array();
-
-            foreach ($achievement_detail as $achievement)
-            {
-                $achievement->value = $achievements->playerstats->achievements[$index++]->achieved;
-                array_push($result, $achievement);
-            }
-
-            $values->achievement_avail = true;
-            $values->achievements = $achievement_detail;
-        }
-        else
+        if ($this->get_http_response_code($url) != "200")
             $values->achievement_avail = false;
+        else
+        {
+            $json = file_get_contents($url);
+            $achievements = json_decode($json);
 
+
+            if (isset($achievements->playerstats->achievements))
+            {
+                $url = "http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002/?key=$API_KEY&appid=$APP_ID&l=english";
+                $json = file_get_contents($url);
+                $achievement_detail = json_decode($json)->game->availableGameStats->achievements;
+
+                $index = 0;
+                $result = array();
+
+                foreach ($achievement_detail as $achievement)
+                {
+                    $achievement->value = $achievements->playerstats->achievements[$index++]->achieved;
+                    array_push($result, $achievement);
+                }
+
+                $values->achievement_avail = true;
+                $values->achievements = $achievement_detail;
+            }
+            else
+                $values->achievement_avail = false;
+        }
         //dd($values);
 
         return view('details')->with('values', $values);
     }
 
-    public function redirectProfile(Request $request)
+    public
+    function redirectProfile(Request $request)
     {
         return redirect()->route('profile', ['id' => $request->session()->get('STEAM_ID')]);
     }
